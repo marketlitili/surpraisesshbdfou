@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAPPY BIRTHDAYY</title>
+<style>
+body{margin:0;background:rgb(27, 16, 17);overflow:hidden;font-family:'Arial', sans-serif;}
+.heart-message{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ff0000;font-size:60px;text-align:center;opacity:0;transition:1s;}
+.heart-container{position:relative;width:100vw;height:100vh;}
+.heart-photo{position:absolute;width:80px;height:80px;border-radius:10px;transition:transform 2s,opacity 2s;}
+
+/* TOMBOL RESUME MUSIK (Muncul jika browser memblokir musik) */
+#resume-btn {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ff0000;
+    color: white;
+    padding: 15px 30px;
+    font-size: 20px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index: 9999;
+    display: none; /* Sembunyikan secara default */
+    box-shadow: 0 0 20px rgba(255,0,0,0.5);
+}
+</style>
+</head>
+<body>
+
+<!-- AUDIO PLAYER (Disembunyikan) -->
+<!-- Pastikan path file musik sama dengan halaman sebelumnya -->
+<audio id="bgMusic" loop>
+    <source src="../odew1/luv1.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Tombol untuk memaksa musik jalan jika browser memblokir -->
+<button id="resume-btn">🎵 Klik untuk Putar Musik 🎵</button>
+
+<div class="heart-container" id="heartContainer"></div>
+<div class="heart-message" id="heartMsg">HAPPY BIRTHDAYYY</div>
+
+<script>
+// --- LOGIKA MUSIK ---
+const bgMusic = document.getElementById('bgMusic');
+const resumeBtn = document.getElementById('resume-btn');
+
+// Coba putar musik saat halaman dimuat
+window.addEventListener('load', () => {
+    bgMusic.play().catch(error => {
+        console.log("Autoplay diblokir, tampilkan tombol resume.");
+        resumeBtn.style.display = 'block';
+    });
+});
+
+// Fungsi saat tombol resume diklik
+resumeBtn.addEventListener('click', () => {
+    bgMusic.play();
+    resumeBtn.style.display = 'none';
+});
+
+// --- LOGIKA ANIMASI HEART ---
+const images=['../odew1/3.jpeg','../odew1/2.jpeg','../odew1/1.jpeg'];
+const container=document.getElementById('heartContainer');
+const count=60;
+const heartCoords=[];
+
+// Hitung koordinat bentuk hati
+for(let i=0;i<count;i++){
+ const t=i/count*Math.PI*2;
+ const x=16*Math.pow(Math.sin(t),3);
+ const y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+ heartCoords.push({x,y});
+}
+
+// Buat elemen gambar
+for(let i=0;i<count;i++){
+ const img=document.createElement('img');
+ img.src=images[i%images.length];
+ img.className='heart-photo';
+ img.style.left=Math.random()*100+'vw';
+ img.style.top=Math.random()*100+'vh';
+ container.appendChild(img);
+}
+
+// Animasi saat load
+window.addEventListener('load',()=>{
+ setTimeout(()=>{document.getElementById('heartMsg').style.opacity=1;},500);
+ const pics=document.querySelectorAll('.heart-photo');
+ pics.forEach((p,i)=>{
+  const coord=heartCoords[i%heartCoords.length];
+  p.style.transform=`translate(${coord.x*20}px,${-coord.y*20}px)`;
+ });
+});
+
+// Efek ledakan saat diklik
+document.body.addEventListener('click',()=>{
+ document.querySelectorAll('.heart-photo').forEach(p=>{
+  p.style.transform=`translate(${(Math.random()-0.5)*2000}px,${(Math.random()-0.5)*2000}px)`;
+  p.style.opacity=0;
+ });
+ document.getElementById('heartMsg').style.opacity=0;
+});
+</script>
+</body>
+</html>
